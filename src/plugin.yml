@@ -1,0 +1,10 @@
+name: FactionsXPBank
+main: ubertweakstor.factionsxpbank.FactionsXPBank
+version: 1.0.0
+depend: [mcore, Factions]
+commands:
+  xpbank:
+    description: "Parent command for XPBank"
+    usage: /<command> [sub-command] [parameters]
+    permission: fxpb.general
+    permission-message: You don't have <permission>
