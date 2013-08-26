@@ -44,12 +44,9 @@ public class FactionsXPBank extends JavaPlugin{
     //Put code into commands
     //Hook into help
     
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-        Player player;
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){       
         boolean isConsole = !(sender instanceof Player);
-        if(!isConsole){
-            player = (Player) sender;
-        }
 	if(cmd.getName().equalsIgnoreCase("xpbank")){
             if (args.length < 1){ //If no args exist, then send error
                 sender.sendMessage(ChatColor.RED+"ERROR: Not enough arguments.");
@@ -65,6 +62,7 @@ public class FactionsXPBank extends JavaPlugin{
                     
                 }
             } else if(command.equalsIgnoreCase("deposit")){
+                //Takes lvls from inventory and puts into faction bank
                 if (isConsole){
                     sender.sendMessage(
                             ChatColor.RED+"ERROR: This command can only be "
@@ -73,6 +71,8 @@ public class FactionsXPBank extends JavaPlugin{
                     
                 }
             } else if(command.equalsIgnoreCase("withdraw")){
+                //xpbank withdraw <amount>
+                //Takes lvls from faction bank
                 if (isConsole){
                     sender.sendMessage(
                             ChatColor.RED+"ERROR: This command can only be "
@@ -81,11 +81,44 @@ public class FactionsXPBank extends JavaPlugin{
                     
                 }
             } else if(command.equalsIgnoreCase("pay")){
+                //xpbank pay <player> <amount>
+                //Takes lvls from bank and gives to player in faction
+                
+                if (isConsole){
+                    sender.sendMessage(
+                            ChatColor.RED+"ERROR: This command can only be "
+                            + "executed by a player.");
+                }
             } else if(command.equalsIgnoreCase("give")){
-            } else if(command.equalsIgnoreCase("take")){                           
-            } else if(command.equalsIgnoreCase("version")){                
+                //xpbank give <faction> <amount>
+                //Gives faction lvls
+                
+                database.ensureEntryExists(args[1]);
+            } else if(command.equalsIgnoreCase("take")){   
+                //xpbank take <faction> <amount>
+                //Takes lvls from faction
+                
+            } else if(command.equalsIgnoreCase("version")){ 
+                //xpbank version
+                //Displays version
+                
+                sender.sendMessage(ChatColor.GOLD+"FactionsXPBank v"
+                        + getDescription().getVersion());
+                sender.sendMessage(ChatColor.GRAY+"Author: "+ChatColor.GOLD
+                        + "John 'boar401s2' Board");
             } else if(command.equalsIgnoreCase("help")){                
-            } else {                
+                //xpbank help
+                //Not sure yet...
+                
+            } else {   
+                //If unknown command is executed, and if they player is naemr, then
+                //rebuke hashly, else respond nicely.
+                //I still <3 you naemr :}
+                if (isConsole || ((Player) sender).getName().equalsIgnoreCase("naemr")){
+                    sender.sendMessage(ChatColor.RED+"ERROR: You stupid idiot, you typed in a nonexistant command!");
+                } else {
+                    sender.sendMessage(ChatColor.RED+"ERROR: Unknown Command!");
+                }
             }
             return true;
 	}

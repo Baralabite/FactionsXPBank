@@ -32,6 +32,14 @@ public class FactionsXPBankDatabase {
         database.put(entry, data);
     }
     
+    public void addToEntry(String entry, Integer data){
+        database.put(entry, getEntry(entry)+data);
+    }
+
+    public void subtractFromEntry(String entry, Integer data){
+        database.put(entry, getEntry(entry)-data);
+    }    
+    
     public Integer getEntry(String entry){
         return (Integer) database.get(entry);
     }
@@ -48,9 +56,10 @@ public class FactionsXPBankDatabase {
         try{
             
             FileInputStream fis = new FileInputStream(parent.getConfig().getString("DatabasePath"));
-            ObjectInputStream ois = new ObjectInputStream(fis);
+            ObjectInputStream ois;
+            ois = new ObjectInputStream(fis);
             try {            
-                HashMap<String, Integer> database = (HashMap<String, Integer>) ois.readObject();
+                database = (HashMap<String, Integer>) ois.readObject();
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(FactionsXPBankDatabase.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -82,4 +91,9 @@ public class FactionsXPBankDatabase {
         return f.exists();
     }
     
+    public void ensureEntryExists(String entry){
+        if (database.get(entry)==null){
+            database.put(entry, 0);
+        }
+    }    
 }
