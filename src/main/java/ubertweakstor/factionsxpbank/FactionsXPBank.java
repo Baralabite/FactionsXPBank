@@ -57,8 +57,16 @@ public class FactionsXPBank extends JavaPlugin{
             
             if (command.equalsIgnoreCase("balance")){ 
                 if(isConsole){
-                    
+                    //xpbank balance <faction>
+                    if(!(args.length==2)){
+                        sender.sendMessage(ChatColor.RED+"ERROR: Invalid number "
+                                + "of parameters!");
+                        return true;
+                    }                                                       
                 } else {
+                    
+                    //UPlayer ply = (UPlayer) ((Player) sender);
+                    sender.sendMessage(ChatColor.GREEN+"Your faction's balance is ");                                       
                     
                 }
             } else if(command.equalsIgnoreCase("deposit")){
@@ -67,6 +75,7 @@ public class FactionsXPBank extends JavaPlugin{
                     sender.sendMessage(
                             ChatColor.RED+"ERROR: This command can only be "
                             + "executed by a player.");
+                    return true;
                 } else {
                     
                 }
@@ -77,6 +86,7 @@ public class FactionsXPBank extends JavaPlugin{
                     sender.sendMessage(
                             ChatColor.RED+"ERROR: This command can only be "
                             + "executed by a player.");
+                    return true;
                 } else {
                     
                 }
@@ -88,6 +98,7 @@ public class FactionsXPBank extends JavaPlugin{
                     sender.sendMessage(
                             ChatColor.RED+"ERROR: This command can only be "
                             + "executed by a player.");
+                    return true;
                 }
             } else if(command.equalsIgnoreCase("give")){
                 //xpbank give <faction> <amount>
