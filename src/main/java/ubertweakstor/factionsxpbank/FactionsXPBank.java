@@ -3,6 +3,8 @@
  * and open the template in the editor.
  */
 package ubertweakstor.factionsxpbank;
+import com.massivecraft.factions.entity.Faction;
+import com.massivecraft.factions.entity.UPlayer;
 import java.io.File;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -48,10 +50,10 @@ public class FactionsXPBank extends JavaPlugin{
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){       
         boolean isConsole = !(sender instanceof Player);
 	if(cmd.getName().equalsIgnoreCase("xpbank")){
-            if (args.length < 1){ //If no args exist, then send error
-                sender.sendMessage(ChatColor.RED+"ERROR: Not enough arguments.");
-                return true;
-            }                     
+            //if (args.length < 1){ //If no args exist, then send error
+            //    sender.sendMessage(ChatColor.RED+"ERROR: Not enough arguments.");
+            //    return true;
+            //}                     
             
             String command = args[0];
             
@@ -65,8 +67,10 @@ public class FactionsXPBank extends JavaPlugin{
                     }                                                       
                 } else {
                     
-                    //UPlayer ply = (UPlayer) ((Player) sender);
-                    sender.sendMessage(ChatColor.GREEN+"Your faction's balance is ");                                       
+                    Player p = (Player) sender;
+                    UPlayer ply = UPlayer.get(p);
+                    Faction faction = ply.getFaction();
+                    sender.sendMessage(ChatColor.GREEN+"Your faction's name is"+faction.getName());
                     
                 }
             } else if(command.equalsIgnoreCase("deposit")){
@@ -105,6 +109,8 @@ public class FactionsXPBank extends JavaPlugin{
                 //Gives faction lvls
                 
                 database.ensureEntryExists(args[1]);
+                database.addToEntry(args[2], Integer.parse
+                        );
             } else if(command.equalsIgnoreCase("take")){   
                 //xpbank take <faction> <amount>
                 //Takes lvls from faction
