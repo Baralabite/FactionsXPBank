@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ubertweakstor.factionsxpbank;
 
 import java.io.File;
@@ -33,14 +29,17 @@ public class FactionsXPBankDatabase {
     }
     
     public void addToEntry(String entry, Integer data){
+        ensureEntryExists(entry);
         database.put(entry, getEntry(entry)+data);
     }
 
     public void subtractFromEntry(String entry, Integer data){
+        ensureEntryExists(entry);
         database.put(entry, getEntry(entry)-data);
     }    
     
     public Integer getEntry(String entry){
+        ensureEntryExists(entry);
         return (Integer) database.get(entry);
     }
     

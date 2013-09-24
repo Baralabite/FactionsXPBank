@@ -18,7 +18,8 @@ public class FactionsXPBank extends JavaPlugin{
 
     @Override
     public void onEnable(){
-        database = new FactionsXPBankDatabase(this);        
+        database = new FactionsXPBankDatabase(this);   
+        database.loadDatabase();
     }
     
     @Override
@@ -28,6 +29,7 @@ public class FactionsXPBank extends JavaPlugin{
         } else {
             this.saveDefaultConfig();
         }
+        database.saveDatabase();
     }
     
     public boolean configExists(){            
@@ -50,7 +52,16 @@ public class FactionsXPBank extends JavaPlugin{
             //    sender.sendMessage(ChatColor.RED+"ERROR: Not enough arguments.");
             //    return true;
             //}
+            if (args.length==0){
+                sender.sendMessage(ChatColor.RED+"ERROR: Invalid command");
+                return true;
+            }
             String command = args[0];
+            if (!sender.hasPermission("xpbank."+command)){
+                sender.sendMessage(ChatColor.RED+"ERROR: You don't have permission to execute that command.");
+                return true;
+            }
+            
             
             if (command.equalsIgnoreCase("balance")){ 
                 //if it's executed at the command line:
@@ -97,26 +108,36 @@ public class FactionsXPBank extends JavaPlugin{
                             ChatColor.RED+"ERROR: This command can only be "
                             + "executed by a player.");
                     return true;
-                } else {
+                } else {                                      
                     
+                    Integer amount = 0;
                     Player ply = (Player) sender;
-                    Integer amount = Integer.getInteger(args[1]);
                     
                     if (!(args.length==2)){
                         sender.sendMessage(ChatColor.RED+"ERROR: Invalid number "
                                 + "of parameters!");
-                    } else if(amount > ply.getLevel()){
+                        return true;
+                    } else {
+                        try{
+                            amount = Integer.parseInt(args[1]);
+                        } catch (Exception ex){
+                            sender.sendMessage(ChatColor.RED+"ERROR: Invalid Integer.");
+                        }
+                    }
+                    if(amount > ply.getLevel()){
                         sender.sendMessage(ChatColor.RED+"ERROR: You don't have "
                                 + "that many levels!");
+                        return true;
                     } else if(amount < 0){
                         sender.sendMessage(ChatColor.RED+"ERROR: You can't give "
                                 + "less than 0 levels!");
-                    }
-                    
+                        return true;
+                    }                                                        
                     UPlayer uply = UPlayer.get(ply);
                     Faction faction = uply.getFaction();
                     database.addToEntry(faction.getName(), amount);
                     ply.setLevel(ply.getLevel()-amount);                    
+                    ply.sendMessage(ChatColor.GREEN+" You have deposited "+ChatColor.GOLD+String.valueOf(amount)+ChatColor.GREEN+" levels.");
                 }
             
             
@@ -134,22 +155,34 @@ public class FactionsXPBank extends JavaPlugin{
                 } else {
                     
                     Player ply = (Player) sender;
-                    Integer amount = Integer.getInteger(args[1]);
+                    Integer amount = 0;
                     UPlayer uply = UPlayer.get(ply);
                     Faction faction = uply.getFaction();
                     
                     if (!(args.length==2)){
                         sender.sendMessage(ChatColor.RED+"ERROR: Invalid number "
                                 + "of parameters!");
-                    } else if(amount > database.getEntry(faction.getName())){
+                        return true;
+                    } else {
+                        try{
+                            amount = Integer.parseInt(args[1]);
+                        } catch (Exception ex){
+                            sender.sendMessage(ChatColor.RED+"ERROR: Invalid Integer.");
+                        }
+                    }
+                    if(amount > database.getEntry(faction.getName())){
                         sender.sendMessage(ChatColor.RED+"ERROR: The bank doesn't "
                                 + "have that many levels!");
+                        return true;
                     } else if(amount < 0){
                         sender.sendMessage(ChatColor.RED+"ERROR: You can't take "
                                 + "less than 0 levels!");
+                        return true;
                     }
                     
                     ply.setLevel(ply.getLevel()+amount);
+                    ply.sendMessage(ChatColor.GREEN+" You have withdrawn "+ChatColor.GOLD
+                            +String.valueOf(amount)+ChatColor.GREEN+" levels.");
                     database.subtractFromEntry(faction.getName(), amount);
                     
                 }
@@ -169,27 +202,44 @@ public class FactionsXPBank extends JavaPlugin{
                     return true;
                 } else {
                     Player ply = (Player) sender;                    
-                    Integer amount = Integer.getInteger(args[2]);
+                    Integer amount = 0;
                     UPlayer uply = UPlayer.get(ply);
                     Faction faction = uply.getFaction();
                     
                     if (!(args.length==3)){
                         sender.sendMessage(ChatColor.RED+"ERROR: Invalid number "
                                 + "of parameters!");
-                    } else if(amount > database.getEntry(faction.getName())){
+                    } else  {
+                        try{
+                            amount = Integer.parseInt(args[2]);
+                        } catch (Exception ex){
+                            sender.sendMessage(ChatColor.RED+"ERROR: Invalid Integer.");
+                        }
+                    }
+                    if(amount > database.getEntry(faction.getName())){
                         sender.sendMessage(ChatColor.RED+"ERROR: The bank doesn't "
                                 + "have that many levels!");
+                        return true;
                     } else if(amount < 0){
                         sender.sendMessage(ChatColor.RED+"ERROR: You can't give "
                                 + "less than 0 levels!");
+                        return true;
                     } else if(getServer().getPlayer(args[1])==null){
                         sender.sendMessage(ChatColor.RED+"ERROR: That player "
                                 + "isn't online!");
+                        return true;
                     }
                     
                     Player receptor = getServer().getPlayer(args[1]);
                     receptor.setLevel(receptor.getLevel()+amount);
                     database.subtractFromEntry(faction.getName(), amount);
+                    receptor.sendMessage(ChatColor.GREEN+"You have been paid "
+                            + ChatColor.GOLD + String.valueOf(amount) + ChatColor.GREEN 
+                            + "levels from "+ply.getName()+".");
+                    
+                    ply.sendMessage(ChatColor.GREEN+"You have paid "
+                            + receptor.getName() + " " + ChatColor.GOLD + String.valueOf(amount)
+                            + ChatColor.GREEN + "levels.");
                     
                 }
             
